@@ -9,7 +9,7 @@ import pygame
 AUDIO_FILE = "quizaudio.mp3"
 BG_IMAGE_FILE = "background1.jpg"
 
-# --- Absolute Paths ---
+# Absolute Paths 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 AUDIO_FILE_PATH = os.path.join(SCRIPT_DIR, AUDIO_FILE)
 BG_IMAGE_PATH = os.path.join(SCRIPT_DIR, BG_IMAGE_FILE)
@@ -22,7 +22,7 @@ if not os.path.exists(BG_IMAGE_PATH):
     print(f"Warning: Background image not found at: {BG_IMAGE_PATH}")
     BG_IMAGE_PATH = None
 
-# --- Global Variables ---
+# Global Variables 
 SCORE = 0
 QUESTION_COUNT = 0
 MAX_QUESTIONS = 10
@@ -39,7 +39,7 @@ BG_LABEL = None
 ORIGINAL_BG_IMAGE = None
 BG_PHOTO = None
 
-# --- Colors (Soft Pink Pastel Theme) ---
+#  Colors 
 COLOR_PALETTE = {
     "BG_PRIMARY": "#FFE6EB",      # soft rose background
     "BG_SECONDARY": "#FFF8FA",    # creamy pink card
@@ -52,14 +52,14 @@ COLOR_PALETTE = {
     "ACCENT_BLACK": "#3E2723"     # deep brown
 }
 
-# --- Difficulty Map ---
+# Difficulty Map 
 DIFFICULTY_MAP = {
     1: (0, 9, "Single-Digit (0-9)"),
     2: (10, 99, "Double-Digit (10-99)"),
     3: (1000, 9999, "Four-Digit (1000-9999)")
 }
 
-# --- Audio ---
+# Audio 
 USE_PYGAME = False
 
 def init_audio():
@@ -87,7 +87,7 @@ def play_background_music():
 def start_music():
     threading.Thread(target=play_background_music, daemon=True).start()
 
-# --- Utility ---
+# Utility 
 def clear_frame(frame):
     for widget in frame.winfo_children():
         if widget != BG_LABEL:
@@ -132,7 +132,7 @@ def quitQuizEarly():
             pygame.mixer.music.stop()
         window.quit()
 
-# --- Background Image ---
+# Background Image
 def resize_background(event):
     global ORIGINAL_BG_IMAGE, BG_PHOTO, BG_LABEL
     if ORIGINAL_BG_IMAGE and BG_LABEL:
@@ -160,7 +160,7 @@ def set_background(frame):
             self.height = height
     resize_background(DummyEvent(frame.winfo_width(), frame.winfo_height()))
 
-# --- GUI Screens ---
+# GUI Screens
 def displayWelcomeScreen():
     clear_frame(main_frame)
     window.title("Ultimate Math Challenge")
@@ -333,7 +333,7 @@ def displayResults():
     tk.Button(results_card,text="Replay", command=displayWelcomeScreen, font=('Inter',14), bg=COLOR_PALETTE["ACCENT_PRIMARY"], fg="white", relief='flat', padx=20,pady=10,width=15).pack(pady=15)
     tk.Button(results_card,text="Exit", command=quitQuizEarly, font=('Inter',14), bg=COLOR_PALETTE["ACCENT_FAIL"], fg="white", relief='flat', padx=20,pady=10,width=15).pack(pady=5)
 
-# --- Main App ---
+# Main App 
 window = tk.Tk()
 window.title("Math Quiz")
 window.attributes('-fullscreen', True)
