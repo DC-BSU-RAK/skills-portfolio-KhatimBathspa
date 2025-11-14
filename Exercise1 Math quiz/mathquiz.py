@@ -233,6 +233,7 @@ def startQuiz(level):
     start_music()
     displayProblem()
 
+# ----------------- MODIFIED FUNCTION -----------------
 def displayProblem():
     global QUESTION_COUNT, answer_entry, feedback_label, CURRENT_HINT
     clear_frame(main_frame)
@@ -240,15 +241,19 @@ def displayProblem():
     main_frame.config(bg=COLOR_PALETTE["BG_PRIMARY"])
     set_background(main_frame)
     
-    control_frame = tk.Frame(main_frame, bg=COLOR_PALETTE["BG_PRIMARY"])
-    control_frame.pack(fill='x', padx=10, pady=5)
-    tk.Button(control_frame,text="❌ Quit Test", command=quitQuizEarly, bg=COLOR_PALETTE["ACCENT_FAIL"], fg="white").pack(side=tk.RIGHT)
-    tk.Label(control_frame,text=f"Score: {SCORE} | Question: {QUESTION_COUNT+1} of {MAX_QUESTIONS}",
-             bg=COLOR_PALETTE["BG_PRIMARY"], fg=COLOR_PALETTE["FG_SECONDARY"]).pack(side=tk.LEFT)
-    
     problem_card = tk.Frame(main_frame, bg=COLOR_PALETTE["BG_SECONDARY"], padx=30,pady=30)
-    problem_card.pack(pady=10)
+    problem_card.pack(pady=40) 
     
+    # --- Header frame inside the problem_card ---
+    header_frame = tk.Frame(problem_card, bg=COLOR_PALETTE["BG_SECONDARY"])
+    header_frame.pack(fill='x', expand=True, pady=(0, 15))
+              
+    # --- Score label ---
+    tk.Label(header_frame,text=f"Score: {SCORE} | Question: {QUESTION_COUNT+1} of {MAX_QUESTIONS}",
+             bg=COLOR_PALETTE["BG_SECONDARY"], 
+             fg=COLOR_PALETTE["FG_PRIMARY"]).pack(side=tk.LEFT)
+    # --- End of header ---
+
     problem_text, num1, num2, operation = generateProblem()
     CURRENT_HINT = get_hint(num1,num2,operation)
     
@@ -258,25 +263,33 @@ def displayProblem():
     answer_entry.pack(pady=15)
     answer_entry.focus_set()
     
-    feedback_label = tk.Label(main_frame,text="", font=('Inter',14), bg=COLOR_PALETTE["BG_PRIMARY"])
-    feedback_label.pack()
+    # --- Feedback label moved inside the card ---
+    feedback_label = tk.Label(problem_card,text="", font=('Inter',14), bg=COLOR_PALETTE["BG_SECONDARY"])
+    feedback_label.pack(pady=(10,0)) # Packed inside problem_card
     
     tk.Button(problem_card,text="Submit Answer", command=submitAnswer, bg=COLOR_PALETTE["ACCENT_PRIMARY"], fg="white").pack(pady=20)
+    
+    # --- Quit button ---
+    tk.Button(problem_card,text="❌ Quit Test", command=quitQuizEarly, 
+              bg=COLOR_PALETTE["ACCENT_FAIL"], fg="white").pack(pady=(5, 10))
+# ----------------- END OF MODIFIED FUNCTION -----------------
 
 def submitAnswer():
     global SCORE, QUESTION_COUNT, ATTEMPTS_LEFT
     user_input = answer_entry.get().strip()
-    feedback_label.config(text="")
+    feedback_label.config(text="") # Clear previous feedback first
+    
     if not user_input:
         feedback_label.config(text="Please enter an answer.", fg=COLOR_PALETTE["ACCENT_FAIL"])
         return
+        
     if isCorrect(user_input,CURRENT_ANSWER):
         score_awarded = 10 if ATTEMPTS_LEFT==2 else 5
         SCORE += score_awarded
         feedback_label.config(text=f"✅ Correct! (+{score_awarded} points)", fg=COLOR_PALETTE["ACCENT_SUCCESS"])
         QUESTION_COUNT += 1
         answer_entry.delete(0,tk.END)
-        window.after(500,nextQuestionOrEnd)
+        window.after(500,nextQuestionOrEnd) # Wait 500ms before next question
     else:
         ATTEMPTS_LEFT -= 1
         if ATTEMPTS_LEFT==1:
@@ -290,9 +303,11 @@ def submitAnswer():
             show_feedback_window(message)
             QUESTION_COUNT += 1
             answer_entry.delete(0,tk.END)
-            nextQuestionOrEnd()
+            nextQuestionOrEnd() # Move to next question immediately after showing answer
 
 def show_feedback_window(message, hint=None):
+    # This function is for the INCORRECT answer popup.
+    # The CORRECT feedback is handled by the feedback_label.
     feedback_window = Toplevel(window)
     feedback_window.title("Feedback")
     feedback_window.geometry("500x300")
@@ -312,6 +327,8 @@ def nextQuestionOrEnd():
     if QUESTION_COUNT < MAX_QUESTIONS:
         displayProblem()
     else:
+        if USE_PYGAME: # Stop music on quiz completion
+            pygame.mixer.music.stop()
         displayResults()
 
 def displayResults():
