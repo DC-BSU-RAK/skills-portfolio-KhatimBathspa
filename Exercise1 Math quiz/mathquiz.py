@@ -9,7 +9,7 @@ import pygame
 AUDIO_FILE = "quizaudio.mp3"
 BG_IMAGE_FILE = "background1.jpg"
 
-# Absolute Paths 
+# Absolute Paths
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 AUDIO_FILE_PATH = os.path.join(SCRIPT_DIR, AUDIO_FILE)
 BG_IMAGE_PATH = os.path.join(SCRIPT_DIR, BG_IMAGE_FILE)
@@ -22,7 +22,7 @@ if not os.path.exists(BG_IMAGE_PATH):
     print(f"Warning: Background image not found at: {BG_IMAGE_PATH}")
     BG_IMAGE_PATH = None
 
-# Global Variables 
+# Global Variables
 SCORE = 0
 QUESTION_COUNT = 0
 MAX_QUESTIONS = 10
@@ -38,28 +38,30 @@ CURRENT_HINT = ""
 BG_LABEL = None
 ORIGINAL_BG_IMAGE = None
 BG_PHOTO = None
+name_entry = None
+inst_entry = None
 
-#  Colors 
+# Colors
 COLOR_PALETTE = {
-    "BG_PRIMARY": "#FFE6EB",      # soft rose background
-    "BG_SECONDARY": "#FFF8FA",    # creamy pink card
-    "FG_PRIMARY": "#4A2E2E",      # dark brown text
-    "FG_SECONDARY": "#B38B8B",    # muted rose
-    "ACCENT_PRIMARY": "#FF8FB1",  # pastel pink
-    "ACCENT_SUCCESS": "#A1E3A1",  # mint green
-    "ACCENT_FAIL": "#FF6B81",     # coral pink
-    "ENTRY_BG": "#FFE9EE",        # light blush
-    "ACCENT_BLACK": "#3E2723"     # deep brown
+    "BG_PRIMARY": "#FFE6EB",       # soft rose background
+    "BG_SECONDARY": "#FFF8FA",     # creamy pink card
+    "FG_PRIMARY": "#4A2E2E",       # dark brown text
+    "FG_SECONDARY": "#B38B8B",     # muted rose
+    "ACCENT_PRIMARY": "#FF8FB1",   # pastel pink
+    "ACCENT_SUCCESS": "#A1E3A1",   # mint green
+    "ACCENT_FAIL": "#FF6B81",      # coral pink
+    "ENTRY_BG": "#FFE9EE",         # light blush
+    "ACCENT_BLACK": "#3E2723"      # deep brown
 }
 
-# Difficulty Map 
+# Difficulty Map
 DIFFICULTY_MAP = {
     1: (0, 9, "Single-Digit (0-9)"),
     2: (10, 99, "Double-Digit (10-99)"),
     3: (1000, 9999, "Four-Digit (1000-9999)")
 }
 
-# Audio 
+# Audio
 USE_PYGAME = False
 
 def init_audio():
@@ -87,7 +89,7 @@ def play_background_music():
 def start_music():
     threading.Thread(target=play_background_music, daemon=True).start()
 
-# Utility 
+# Utility
 def clear_frame(frame):
     for widget in frame.winfo_children():
         if widget != BG_LABEL:
@@ -170,9 +172,9 @@ def displayWelcomeScreen():
     card = tk.Frame(main_frame, bg=COLOR_PALETTE["BG_SECONDARY"], padx=40,pady=40)
     card.pack(pady=70,padx=20)
     tk.Label(card,text="🎯 Ultimate Arithmetic Quiz 🎯", font=('Inter',22,'bold'),
-             fg=COLOR_PALETTE["ACCENT_PRIMARY"], bg=COLOR_PALETTE["BG_SECONDARY"]).pack(pady=(10,20))
+              fg=COLOR_PALETTE["ACCENT_PRIMARY"], bg=COLOR_PALETTE["BG_SECONDARY"]).pack(pady=(10,20))
     tk.Label(card,text="Test your addition and subtraction skills across three difficulty levels!",
-             font=('Inter',12), fg=COLOR_PALETTE["FG_PRIMARY"], bg=COLOR_PALETTE["BG_SECONDARY"], wraplength=380, justify='center').pack(pady=20)
+              font=('Inter',12), fg=COLOR_PALETTE["FG_PRIMARY"], bg=COLOR_PALETTE["BG_SECONDARY"], wraplength=380, justify='center').pack(pady=20)
     tk.Button(card,text="Start Registration", command=displayStartScreen, font=('Inter',14,'bold'),
               bg=COLOR_PALETTE["ACCENT_PRIMARY"], fg="white", relief='flat', padx=20, pady=10, width=20).pack(pady=10)
 
@@ -233,7 +235,7 @@ def startQuiz(level):
     start_music()
     displayProblem()
 
-# ----------------- MODIFIED FUNCTION -----------------
+#  MODIFIED FUNCTION 
 def displayProblem():
     global QUESTION_COUNT, answer_entry, feedback_label, CURRENT_HINT
     clear_frame(main_frame)
@@ -244,15 +246,15 @@ def displayProblem():
     problem_card = tk.Frame(main_frame, bg=COLOR_PALETTE["BG_SECONDARY"], padx=30,pady=30)
     problem_card.pack(pady=40) 
     
-    # --- Header frame inside the problem_card ---
+    # Header frame inside the problem_card
     header_frame = tk.Frame(problem_card, bg=COLOR_PALETTE["BG_SECONDARY"])
     header_frame.pack(fill='x', expand=True, pady=(0, 15))
-              
-    # --- Score label ---
+             
+    # Score label
     tk.Label(header_frame,text=f"Score: {SCORE} | Question: {QUESTION_COUNT+1} of {MAX_QUESTIONS}",
              bg=COLOR_PALETTE["BG_SECONDARY"], 
              fg=COLOR_PALETTE["FG_PRIMARY"]).pack(side=tk.LEFT)
-    # --- End of header ---
+    # End of header
 
     problem_text, num1, num2, operation = generateProblem()
     CURRENT_HINT = get_hint(num1,num2,operation)
@@ -263,16 +265,16 @@ def displayProblem():
     answer_entry.pack(pady=15)
     answer_entry.focus_set()
     
-    # --- Feedback label moved inside the card ---
+    # Feedback label moved inside the card
     feedback_label = tk.Label(problem_card,text="", font=('Inter',14), bg=COLOR_PALETTE["BG_SECONDARY"])
     feedback_label.pack(pady=(10,0)) # Packed inside problem_card
     
     tk.Button(problem_card,text="Submit Answer", command=submitAnswer, bg=COLOR_PALETTE["ACCENT_PRIMARY"], fg="white").pack(pady=20)
     
-    # --- Quit button ---
+    # Quit button
     tk.Button(problem_card,text="❌ Quit Test", command=quitQuizEarly, 
               bg=COLOR_PALETTE["ACCENT_FAIL"], fg="white").pack(pady=(5, 10))
-# ----------------- END OF MODIFIED FUNCTION -----------------
+#  END OF MODIFIED FUNCTION 
 
 def submitAnswer():
     global SCORE, QUESTION_COUNT, ATTEMPTS_LEFT
