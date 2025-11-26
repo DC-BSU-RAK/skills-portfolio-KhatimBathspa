@@ -5,9 +5,6 @@ import os
 import json
 from datetime import datetime
 
-# OPTIONAL IMPORTS (With fixes for VS Code errors)
-# We use try/except so the app runs even if you don't have these libraries.
-# The '# type: ignore' comment stops Pylance from showing red errors if not installed.
 
 try:
     from reportlab.lib.pagesizes import letter  # type: ignore
